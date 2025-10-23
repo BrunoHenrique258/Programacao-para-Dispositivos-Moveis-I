@@ -1,6 +1,6 @@
 // App.tsx
 import React from 'react';
-import Exercicio from './Lista03/src/exercicio7/screens/ImagensObtidas';
+import Exercicio from './Lista01/src/screens/Exercicio1'
 
 export default function App() {
   return <Exercicio />;
