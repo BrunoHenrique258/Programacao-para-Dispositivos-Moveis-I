@@ -3,11 +3,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import LoginScreen from "@/screens/LoginScreen";
-import HomeScreen from "@/screens/HomeScreen";
-import CadastroAlunoScreen from "@/screens/CadastroAlunoScreen";
-import CadastroDisciplinaScreen from "@/screens/CadastroDisciplinaScreen";
-import BoletimScreen from "@/screens/BoletimScreen";
+import LoginScreen from "../screens/LoginScreen";
+import HomeScreen from "../screens/HomeScreen";
+import CadastroAlunoScreen from "../screens/CadastroAlunoScreen";
+import CadastroDisciplinaScreen from "../screens/CadastroDisciplinaScreen";
+import BoletimScreen from "../screens/BoletimScreen";
 
 type RootStackParamList = {
   Login: undefined;

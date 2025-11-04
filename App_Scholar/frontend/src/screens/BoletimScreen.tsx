@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { api } from "@/services/api";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import { api } from "../services/api";
 
 type LinhaBoletim = { disciplina: string; nota1: number; nota2: number; media: number };
 

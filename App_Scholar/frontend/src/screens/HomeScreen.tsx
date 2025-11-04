@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Button from "@/components/Button";
-import { AuthContext } from "@/navigation/AppNavigator";
+import Button from "../components/Button";
+import { AuthContext } from "../navigation/AppNavigator";
 
 export default function HomeScreen() {
   const { signOut } = useContext(AuthContext);

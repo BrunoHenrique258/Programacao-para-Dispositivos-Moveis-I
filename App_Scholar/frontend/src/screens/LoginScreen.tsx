@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { api } from "@/services/api";
-import { AuthContext } from "@/navigation/AppNavigator";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import { api } from "../services/api";
+import { AuthContext } from "../navigation/AppNavigator";
 
 export default function LoginScreen() {
   const { signIn } = useContext(AuthContext);

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Alert } from "react-native";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import { api } from "@/services/api";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import { api } from "../services/api";
 
 export default function CadastroAlunoScreen() {
   const [nome, setNome] = useState("");
