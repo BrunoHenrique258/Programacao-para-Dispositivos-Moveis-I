@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import { api } from "../services/api";
-import { AuthContext } from "../navigation/AppNavigator";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function LoginScreen() {
   const { signIn } = useContext(AuthContext);
@@ -12,11 +12,16 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    console.log("➡ Clicou no botão Entrar!");
     try {
       setLoading(true);
       const { data } = await api.post("/auth/login", { email, senha });
+      console.log("Token recebido:", data.token);
+
       await signIn(data.token);
+      console.log("Token salvo no contexto!");
     } catch (e: any) {
+      console.log("ERRO NO LOGIN:", e);
       Alert.alert("Erro", e?.response?.data?.message || "Falha no login");
     } finally {
       setLoading(false);
