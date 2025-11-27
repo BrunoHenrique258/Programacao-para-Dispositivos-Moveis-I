@@ -4,24 +4,33 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { api } from "../services/api";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type RootStackParamList = {
+  Login: undefined;
+  CadastroUsuario: undefined;
+  App: undefined;
+};
 
 export default function LoginScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { signIn } = useContext(AuthContext);
-  const [email, setEmail] = useState("admin@fatec.br");
-  const [senha, setSenha] = useState("123456");
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    console.log("➡ Clicou no botão Entrar!");
     try {
       setLoading(true);
+  
       const { data } = await api.post("/auth/login", { email, senha });
-      console.log("Token recebido:", data.token);
-
-      await signIn(data.token);
-      console.log("Token salvo no contexto!");
+ 
+      await signIn(data.token, data.tipo, data.userId);
+  
     } catch (e: any) {
-      console.log("ERRO NO LOGIN:", e);
+      console.log("ERRO LOGIN:", e);
       Alert.alert("Erro", e?.response?.data?.message || "Falha no login");
     } finally {
       setLoading(false);
@@ -30,10 +39,30 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>App Boletim</Text>
-      <Input placeholder="E-mail" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-      <Input placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+      <Text style={styles.title}>App Scholar</Text>
+
+      <Input
+        placeholder="E-mail"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+      />
+
+      <Input
+        placeholder="Senha"
+        value={senha}
+        onChangeText={setSenha}
+        secureTextEntry
+      />
+
       <Button title="Entrar" onPress={handleLogin} loading={loading} />
+
+      <View style={{ marginTop: 20 }}>
+        <Button
+          title="Criar Conta"
+          onPress={() => navigation.navigate("CadastroUsuario")}
+        />
+      </View>
     </View>
   );
 }

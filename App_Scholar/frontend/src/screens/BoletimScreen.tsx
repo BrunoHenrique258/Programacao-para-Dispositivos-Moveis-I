@@ -1,48 +1,106 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, Alert } from "react-native";
-import Input from "../components/Input";
-import Button from "../components/Button";
+import React, { useContext, useEffect, useState } from "react";
+import { View, Text, StyleSheet, Alert, FlatList, TextInput } from "react-native";
 import { api } from "../services/api";
+import { AuthContext } from "../contexts/AuthContext";
+import Button from "../components/Button";
 
-type LinhaBoletim = { disciplina: string; nota1: number; nota2: number; media: number };
+interface LinhaBoletim {
+  cod_boletim: number;
+  aluno_nome: string;
+  disciplina_nome: string;
+  nota: number;
+  media: number;
+}
 
 export default function BoletimScreen() {
-  const [matricula, setMatricula] = useState("");
-  const [itens, setItens] = useState<LinhaBoletim[]>([]);
+  const { user } = useContext(AuthContext);
+  const isAluno = user?.tipo === "aluno";
+  const isProfessor = user?.tipo === "professor";
+  const isAdmin = user?.tipo === "admin";
 
-  const buscar = async () => {
+  const [lista, setLista] = useState<LinhaBoletim[]>([]);
+  const [editando, setEditando] = useState<number | null>(null);
+  const [notaEdit, setNotaEdit] = useState("");
+
+  const carregar = async () => {
     try {
-      const { data } = await api.get(`/boletim/${matricula}`);
-      setItens(data.itens);
-    } catch (e: any) {
-      Alert.alert("Erro", e?.response?.data?.message || "Falha na consulta");
+      const { data } = await api.get("/boletim");
+      setLista(data);
+    } catch {
+      Alert.alert("Erro", "Falha ao carregar boletim");
     }
   };
+
+  const salvarEdicao = async (id: number) => {
+    try {
+      await api.put(`/boletim/${id}`, {
+        nota: Number(notaEdit),
+      });
+      Alert.alert("Sucesso", "Nota atualizada!");
+      setEditando(null);
+      carregar();
+    } catch {
+      Alert.alert("Erro", "Falha ao editar nota");
+    }
+  };
+
+  useEffect(() => {
+    carregar();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Boletim</Text>
-      <Input placeholder="Matrícula do aluno" value={matricula} onChangeText={setMatricula} />
-      <Button title="Buscar" onPress={buscar} />
+
       <FlatList
-        style={{ marginTop: 10 }}
-        data={itens}
-        keyExtractor={(_, i) => i.toString()}
+        data={lista}
+        keyExtractor={(i) => i.cod_boletim.toString()}
         renderItem={({ item }) => (
-          <View style={styles.row}>
-            <Text style={styles.cell}>{item.disciplina}</Text>
-            <Text style={styles.cell}>N1: {item.nota1}</Text>
-            <Text style={styles.cell}>N2: {item.nota2}</Text>
-            <Text style={styles.cell}>M: {item.media.toFixed(1)}</Text>
+          <View style={styles.card}>
+            <Text style={styles.txt}>
+              <Text style={styles.bold}>Aluno:</Text> {item.aluno_nome}
+            </Text>
+
+            <Text style={styles.txt}>
+              <Text style={styles.bold}>Disciplina:</Text> {item.disciplina_nome}
+            </Text>
+
+            {editando === item.cod_boletim ? (
+              <>
+                <TextInput
+                  placeholder="Nova nota"
+                  style={styles.input}
+                  value={notaEdit}
+                  onChangeText={setNotaEdit}
+                  keyboardType="numeric"
+                />
+                <Button title="Salvar" onPress={() => salvarEdicao(item.cod_boletim)} />
+              </>
+            ) : (
+              <Text style={styles.txt}>
+                <Text style={styles.bold}>Nota:</Text> {item.nota}
+              </Text>
+            )}
+
+            <Text style={styles.txt}>
+              <Text style={styles.bold}>Média:</Text> {item.media}
+            </Text>
+
+            {(isAdmin || isProfessor) && editando !== item.cod_boletim && (
+              <Button title="Editar nota" onPress={() => setEditando(item.cod_boletim)} />
+            )}
           </View>
         )}
       />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
-  row: { flexDirection: "row", justifyContent: "space-between", backgroundColor: "#fff", padding: 12, borderRadius: 8, marginBottom: 8, borderWidth: 1, borderColor: "#eee" },
-  cell: { fontSize: 14, fontWeight: "600" },
+  container: { flex: 1, padding: 15 },
+  title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
+  card: { padding: 15, backgroundColor: "#f0f0f0", borderRadius: 8, marginBottom: 10 },
+  txt: { fontSize: 16, marginBottom: 4 },
+  bold: { fontWeight: "bold" },
+  input: { backgroundColor: "#fff", padding: 8, borderRadius: 6, marginBottom: 10 },
 });
