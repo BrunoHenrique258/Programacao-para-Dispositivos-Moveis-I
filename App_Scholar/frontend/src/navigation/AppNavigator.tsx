@@ -1,46 +1,26 @@
 import React, { useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { AuthContext } from "../contexts/AuthContext";
 
 import LoginScreen from "../screens/LoginScreen";
 import CadastroUsuarioScreen from "../screens/CadastroUsuarioScreen";
-
 import HomeScreen from "../screens/HomeScreen";
 import CadastroAlunoScreen from "../screens/CadastroAlunoScreen";
-import CadastroProfessorScreen from "../screens/CadastroProfessorScreen";
 import CadastroDisciplinaScreen from "../screens/CadastroDisciplinaScreen";
 import BoletimScreen from "../screens/BoletimScreen";
 
-const Stack = createNativeStackNavigator();
+import { AuthContext } from "../contexts/AuthContext";
+import { RootStackParamList } from "../types/navigation";
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
 
 function AppDrawer() {
-  const { tipo } = useContext(AuthContext);
-
   return (
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={HomeScreen} />
-
-      {/* Cadastro de Usuário - todos podem */}
-      <Drawer.Screen name="Cadastro de Usuário" component={CadastroUsuarioScreen} />
-
-      {/* Cadastro de Aluno - Admin e Professor */}
-      {(tipo === "admin" || tipo === "professor") && (
-        <Drawer.Screen name="Cadastro de Aluno" component={CadastroAlunoScreen} />
-      )}
-
-      {/* Cadastro de Professor - Apenas Admin */}
-      {tipo === "admin" && (
-        <Drawer.Screen name="Cadastro de Professor" component={CadastroProfessorScreen} />
-      )}
-
-      {/* Cadastro de Disciplina - Apenas Admin */}
-      {tipo === "admin" && (
-        <Drawer.Screen name="Cadastro de Disciplina" component={CadastroDisciplinaScreen} />
-      )}
-
-      {/* Boletim - Todos podem ver */}
+      <Drawer.Screen name="Cadastro de Aluno" component={CadastroAlunoScreen} />
+      <Drawer.Screen name="Cadastro de Disciplina" component={CadastroDisciplinaScreen} />
       <Drawer.Screen name="Boletim" component={BoletimScreen} />
     </Drawer.Navigator>
   );

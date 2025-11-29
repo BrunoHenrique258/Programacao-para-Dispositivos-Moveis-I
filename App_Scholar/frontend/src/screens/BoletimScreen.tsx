@@ -1,3 +1,4 @@
+// screens/BoletimScreen.tsx
 import React, { useContext, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Alert, FlatList, TextInput } from "react-native";
 import { api } from "../services/api";
@@ -14,6 +15,7 @@ interface LinhaBoletim {
 
 export default function BoletimScreen() {
   const { user } = useContext(AuthContext);
+
   const isAluno = user?.tipo === "aluno";
   const isProfessor = user?.tipo === "professor";
   const isAdmin = user?.tipo === "admin";
@@ -33,9 +35,7 @@ export default function BoletimScreen() {
 
   const salvarEdicao = async (id: number) => {
     try {
-      await api.put(`/boletim/${id}`, {
-        nota: Number(notaEdit),
-      });
+      await api.put(`/boletim/${id}`, { nota: Number(notaEdit) });
       Alert.alert("Sucesso", "Nota atualizada!");
       setEditando(null);
       carregar();
@@ -57,18 +57,13 @@ export default function BoletimScreen() {
         keyExtractor={(i) => i.cod_boletim.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.txt}>
-              <Text style={styles.bold}>Aluno:</Text> {item.aluno_nome}
-            </Text>
-
-            <Text style={styles.txt}>
-              <Text style={styles.bold}>Disciplina:</Text> {item.disciplina_nome}
-            </Text>
+            <Text style={styles.txt}><Text style={styles.bold}>Aluno:</Text> {item.aluno_nome}</Text>
+            <Text style={styles.txt}><Text style={styles.bold}>Disciplina:</Text> {item.disciplina_nome}</Text>
 
             {editando === item.cod_boletim ? (
               <>
                 <TextInput
-                  placeholder="Nova nota"
+                  placeholder="Nova Nota"
                   style={styles.input}
                   value={notaEdit}
                   onChangeText={setNotaEdit}
@@ -99,7 +94,7 @@ export default function BoletimScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 15 },
   title: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 10 },
-  card: { padding: 15, backgroundColor: "#f0f0f0", borderRadius: 8, marginBottom: 10 },
+  card: { padding: 15, backgroundColor: "#eee", borderRadius: 8, marginBottom: 12 },
   txt: { fontSize: 16, marginBottom: 4 },
   bold: { fontWeight: "bold" },
   input: { backgroundColor: "#fff", padding: 8, borderRadius: 6, marginBottom: 10 },

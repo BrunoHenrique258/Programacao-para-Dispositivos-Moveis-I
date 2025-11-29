@@ -1,11 +1,12 @@
+// contexts/AuthContext.tsx
 import React, { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface AuthContextType {
   token: string | null;
   tipo: "admin" | "professor" | "aluno" | null;
-  user: any | null; // <- AQUI ESTÁ A PROPRIEDADE QUE ESTÁ FALTANDO
-  signIn: (token: string, tipo: string, userData: any) => Promise<void>;
+  user: any;
+  signIn: (token: string, tipo: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -20,40 +21,35 @@ export const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: any) {
   const [token, setToken] = useState<string | null>(null);
   const [tipo, setTipo] = useState<"admin" | "professor" | "aluno" | null>(null);
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    async function loadStorage() {
+    (async () => {
       const t = await AsyncStorage.getItem("@token");
       const tp = await AsyncStorage.getItem("@tipo");
-      const u = await AsyncStorage.getItem("@user");
 
       if (t) setToken(t);
       if (tp) setTipo(tp as any);
-      if (u) setUser(JSON.parse(u));
-    }
-    loadStorage();
+
+      setUser({ tipo: tp });
+    })();
   }, []);
 
-  async function signIn(token: string, tipo: string, userData: any) {
-    setToken(token);
-    setTipo(tipo as any);
-    setUser(userData);
-
+  const signIn = async (token: string, tipo: string) => {
     await AsyncStorage.setItem("@token", token);
     await AsyncStorage.setItem("@tipo", tipo);
-    await AsyncStorage.setItem("@user", JSON.stringify(userData));
-  }
 
-  async function signOut() {
+    setToken(token);
+    setTipo(tipo as any);
+    setUser({ tipo });
+  };
+
+  const signOut = async () => {
+    await AsyncStorage.clear();
     setToken(null);
     setTipo(null);
     setUser(null);
-
-    await AsyncStorage.removeItem("@token");
-    await AsyncStorage.removeItem("@tipo");
-    await AsyncStorage.removeItem("@user");
-  }
+  };
 
   return (
     <AuthContext.Provider value={{ token, tipo, user, signIn, signOut }}>
