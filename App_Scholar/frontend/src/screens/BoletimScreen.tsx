@@ -14,7 +14,7 @@ interface LinhaBoletim {
 }
 
 export default function BoletimScreen() {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
 
   const isAluno = user?.tipo === "aluno";
   const isProfessor = user?.tipo === "professor";
@@ -25,17 +25,21 @@ export default function BoletimScreen() {
   const [notaEdit, setNotaEdit] = useState("");
 
   const carregar = async () => {
-    try {
-      const { data } = await api.get("/boletim");
-      setLista(data);
-    } catch {
-      Alert.alert("Erro", "Falha ao carregar boletim");
-    }
-  };
+  try {
+    const { data } = await api.get("/boletim", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setLista(data);
+  } catch {
+    Alert.alert("Erro", "Falha ao carregar boletim");
+  }
+};
 
   const salvarEdicao = async (id: number) => {
     try {
-      await api.put(`/boletim/${id}`, { nota: Number(notaEdit) });
+      await api.put(`/boletim/${id}`, { nota: Number(notaEdit) }, {headers: { Athorization: `Bearer ${token}`}});
       Alert.alert("Sucesso", "Nota atualizada!");
       setEditando(null);
       carregar();

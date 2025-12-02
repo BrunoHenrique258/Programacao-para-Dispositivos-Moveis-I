@@ -2,7 +2,6 @@
 import { Request, Response } from "express";
 import { pool } from "../database/connection";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 export class AuthController {
 
@@ -56,13 +55,15 @@ export class AuthController {
       const valido = await bcrypt.compare(senha, user.senha_hash);
       if (!valido) return res.status(401).json({ message: "Email ou senha inválidos" });
 
-      const token = jwt.sign(
-        { sub: user.cod_usuario, email: user.email, tipo: user.tipo },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "8h" }
-      );
-
-      res.json({ token, tipo: user.tipo });
+      // Agora NÃO retorna token
+      res.json({
+        usuario: {
+          id: user.cod_usuario,
+          nome: user.nome,
+          email: user.email,
+          tipo: user.tipo
+        }
+      });
 
     } catch (e) {
       console.error("Erro no login:", e);

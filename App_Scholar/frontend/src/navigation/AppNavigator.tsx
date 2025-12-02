@@ -8,12 +8,14 @@ import HomeScreen from "../screens/HomeScreen";
 import CadastroAlunoScreen from "../screens/CadastroAlunoScreen";
 import CadastroDisciplinaScreen from "../screens/CadastroDisciplinaScreen";
 import BoletimScreen from "../screens/BoletimScreen";
+import AvisosListScreen from "../screens/AvisosListScreen";
+import AvisosCreateScreen from "../screens/AvisosCreateScreen";
 
 import { AuthContext } from "../contexts/AuthContext";
-import { RootStackParamList } from "../types/navigation";
+import { RootStackParamList, AppDrawerParamList } from "../types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator<AppDrawerParamList>();
 
 function AppDrawer() {
   return (
@@ -22,6 +24,8 @@ function AppDrawer() {
       <Drawer.Screen name="Cadastro de Aluno" component={CadastroAlunoScreen} />
       <Drawer.Screen name="Cadastro de Disciplina" component={CadastroDisciplinaScreen} />
       <Drawer.Screen name="Boletim" component={BoletimScreen} />
+      <Drawer.Screen name="AvisosList" component={AvisosListScreen} />
+      <Drawer.Screen name="AvisosCreate" component={AvisosCreateScreen} />
     </Drawer.Navigator>
   );
 }
